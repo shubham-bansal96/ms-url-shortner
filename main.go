@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/ms-url-shortner/app/config"
+	"github.com/ms-url-shortner/app/logging"
 	"github.com/ms-url-shortner/app/route"
 )
 
@@ -16,10 +17,15 @@ func main() {
 	config.Initialize()
 	log.Println("config Initialized Successfully")
 
+	logging.Initialize(config.Config)
+	log.Println("log initialised successfully")
+
+	lw := logging.LogForFunc()
+
 	route.Initialize(gin)
-	log.Println("route Initialized Successfully")
+	lw.Debug("routes initialized successfully")
 
 	if err := gin.Run(listenPort); err != nil {
-		log.Fatalf("gin engine failed to run: %v", err.Error())
+		lw.Fatalf("gin engine failed to run", err.Error())
 	}
 }
