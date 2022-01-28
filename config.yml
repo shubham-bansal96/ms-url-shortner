@@ -1,0 +1,4 @@
+Logging:
+ LogLevel: debug
+MSName: ms-url-shortner
+Environment: dev
