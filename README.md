@@ -15,28 +15,40 @@ Micro-service used to short the url.
     made then it will first check in map, and if the URL exists then it will directly return the same shorted URL from map.
 
 # Error Codes for JSON Response- 
-    400(Bad Request) - If JSON request is not able to bind with object
-    422(Unprocessable entity) - If data inside JSON request is empty or is not valid
-    200(status ok) - URL is successfully shorted
+    -----------------------------------------------------------------------------------------
+    | Error Codes               |  Description                                              |
+    -----------------------------------------------------------------------------------------
+    | 400(Bad Request)          |  If JSON request is not able to bind with object          |
+    -----------------------------------------------------------------------------------------
+    | 422(Unprocessable entity) |  If data inside JSON request is empty or is not valid     |
+    -----------------------------------------------------------------------------------------
+    | 200(status ok)            |  URL is successfully shorted                              |
+    -----------------------------------------------------------------------------------------
 
 # go run main.go -> this command will start the application locally
 
 # Application Running Port - 4242
 
-# URL - http://localhost:4242/ms-url-shortner
+# Base URL - http://localhost:4242/ms-url-shortner
 
 # EndPoints - 
-    /ping - GET -> test whether application is running or not
-    /getshorturl - POST -> get the shorted URL
+    ---------------------------------------------------------------------------------------------------------------------------------
+    | EndPoints    | Request Type | Description                                 | URL                                               |
+    ---------------------------------------------------------------------------------------------------------------------------------
+    | /ping        |    Get       | test whether application is running or not  | http://localhost:4242/ms-url-shortner/ping        |
+    ---------------------------------------------------------------------------------------------------------------------------------
+    | /getshorturl |    POST      | get the shorted URL                         | http://localhost:4242/ms-url-shortner/getshorturl |
+    ---------------------------------------------------------------------------------------------------------------------------------
 
 # Json Request Object for endpoint -> /getshorturl 
     {
         url: string
     }
-    example - 
+    Example - 
     {
         "url":"https://infracloud.io"
     }
+    
 # Json Response object for endpoint - > /getshorturl 
         {
             data  interface{} 
@@ -46,7 +58,7 @@ Micro-service used to short the url.
             }      
         }
 
-    example
+    Example
     1. If there is no error it means response is successful
         {
             "data": {
@@ -62,13 +74,16 @@ Micro-service used to short the url.
                     "message": "invalid url"
                 }
             }
---------------------------------------------------------------------------------------------------------------
-# Docker image - https://hub.docker.com/r/shubhambansal96/msurlshortner
-    docker image for this app is available on docker hub(public image), you can run below mentioned command to run image on your machine.
 
-    1. To get the image -> docker pull shubhambansal96/msurlshortner
+# Docker image - https://hub.docker.com/r/shubhambansal96/msurlshortner
+    docker image for this app is available on docker hub, you can run below mentioned command to run image on your machine. I have
+    created this image as public for as of now, so no credentials are required to pull this image.
+
+    Image Name - shubhambansal96/msurlshortner
+
+    1. To pull and run this image -> docker run -td -p 4246:4242 shubhambansal96/msurlshortner
                 
-    2. Container will be running on port 4242, make sure you map host port to container port on 4242
-        example -> docker run -td -p 4246:4242 shubhambansal96/msurlshortner
+    NOTE -> Container will be running on port 4242, make sure you map host port to container port on 4242
+        example -> docker run -td -p 4246:4242 shubhambansal96/msurlshortner, 4246 is host port, you can give any port number in place of 4246.
                                             
 # END
