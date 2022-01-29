@@ -14,7 +14,7 @@ type BaseController struct {
 	ShortenURLService services.IShortenUrl
 }
 
-func NewBaseContoller(sus *services.ShortenUrl) *BaseController {
+func NewBaseContoller(sus services.IShortenUrl) *BaseController {
 	return &BaseController{
 		ShortenURLService: sus,
 	}
@@ -24,7 +24,7 @@ func (bc *BaseController) Ping(ctx *gin.Context) {
 	ctx.String(http.StatusOK, "ping successful")
 }
 
-func (bc *BaseController) HandleURLRequest(ctx *gin.Context) {
+func (bc *BaseController) HandleURLShortner(ctx *gin.Context) {
 	lw := logging.LogForFunc()
 
 	var requestObj *model.URLDTO

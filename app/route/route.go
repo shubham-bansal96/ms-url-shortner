@@ -12,5 +12,5 @@ func Initialize(router *gin.Engine) {
 
 	appGroup := router.Group("/" + config.Config.MSName)
 	appGroup.GET(testEndPoint, ctrl.Ping)
-	appGroup.POST(getShortURLEndPoint, ctrl.HandleURLRequest)
+	appGroup.POST(getShortURLEndPoint, ctrl.HandleURLShortner)
 }

@@ -19,10 +19,10 @@ type IShortenUrl interface {
 }
 
 type ShortenUrl struct {
-	UId *UId
+	UId IUID
 }
 
-func NewShortenURLService(uid *UId) *ShortenUrl {
+func NewShortenURLService(uid IUID) IShortenUrl {
 	return &ShortenUrl{
 		UId: uid,
 	}
@@ -51,9 +51,17 @@ func (su *ShortenUrl) ShortURL(ctx context.Context, url string) *model.URLDTO {
 	return &model.URLDTO{URL: &newURL}
 }
 
+// helper method for test case
+func SetDataInURLRepository(key, value string) {
+	urlRepo[key] = value
+}
+
+type IUID interface {
+	GetUniqueID() string
+}
 type UId struct{}
 
-func NewUidService() *UId {
+func NewUidService() IUID {
 	return &UId{}
 }
 

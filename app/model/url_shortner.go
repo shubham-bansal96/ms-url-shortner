@@ -26,10 +26,14 @@ func (url *URLDTO) Validate() *Error {
 	}
 
 	if str[0] == "https:" || str[0] == "http:" {
-		lw.Error("url is valid")
+		lw.Info("url is valid")
 		return nil
 	}
 
 	lw.Error("url is invalid")
 	return NewError(http.StatusUnprocessableEntity, "invalid url")
+}
+
+func NewURLDto() *URLDTO {
+	return &URLDTO{}
 }

@@ -28,3 +28,8 @@ func Initialize() {
 		log.Fatalf("Error Unmarshelling config file: %v", err.Error())
 	}
 }
+
+// helper method to set mock config
+func SetConfig(config *Configuration) {
+	Config = config
+}

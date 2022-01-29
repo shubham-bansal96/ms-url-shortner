@@ -12,6 +12,7 @@ import (
 const listenPort = ":4242"
 
 func main() {
+	gin.SetMode(gin.ReleaseMode)
 	gin := gin.Default()
 
 	config.Initialize()
@@ -26,6 +27,6 @@ func main() {
 	lw.Debug("routes initialized successfully")
 
 	if err := gin.Run(listenPort); err != nil {
-		lw.Fatalf("gin engine failed to run", err.Error())
+		lw.Fatal("gin engine failed to run", err.Error())
 	}
 }
