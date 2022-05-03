@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/ms-url-shortner/app/config"
+	_ "github.com/ms-url-shortner/app/docs"
 	"github.com/ms-url-shortner/app/logging"
 	"github.com/ms-url-shortner/app/route"
 )

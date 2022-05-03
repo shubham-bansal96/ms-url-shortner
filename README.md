@@ -85,5 +85,28 @@ Micro-service used to short the url.
                 
     NOTE -> Container will be running on port 4242, make sure you map host port to container port on 4242
         example -> docker run -td -p 4246:4242 shubhambansal96/msurlshortner, 4246 is host port, you can give any port number in place of 4246.
+
+# Swagger 
+    To install swagger on Windows/Linux/Mac, please go through with mentioned below link
+    https://goswagger.io/install.html
+
+    Once you install swagger then download the go package for the same using
+    go get -d github.com/go-swagger/go-swagger/cmd/swagger
+
+    Run swagger generate spec -o ./swagger.yaml --scan-models in the root of project.
+    swagger serve -F=swagger swagger.yaml
+
+    If the commands look complicated there’s a simpler way! Just create a file called Makefile in the root of your project and paste the following snippet into it:
+
+    swagger:
+	swagger generate spec -o ./swagger.yaml --scan-models
+
+    serve-swagger:
+        swagger serve -F=swagger swagger.yaml
+
+    Then you can simply use make swagger to generate the spec (i.e. swagger.yaml) and use make serve-swagger to view the resulting docs in a browser. Also instead of using make serve-swagger you can paste your yaml file into swagger editor.
                                             
+    For more info you can go through with mentioned below link
+    https://medium.com/@pedram.esmaeeli/generate-swagger-specification-from-go-source-code-648615f7b9d9
+    
 # END
