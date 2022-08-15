@@ -1,4 +1,4 @@
-FROM golang:latest as builder
+FROM golang:alpine AS builder
 
 WORKDIR /app/ms-url-shortner
 
@@ -15,8 +15,6 @@ WORKDIR /app
 
 COPY --from=builder /app/ms-url-shortner/ms-url-shortner /app/
 COPY --from=builder /app/ms-url-shortner/config.yml /app/
-
-RUN apk add libc6-compat
 
 CMD ./ms-url-shortner
 
