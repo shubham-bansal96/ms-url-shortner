@@ -1,12 +1,20 @@
-name: Go
+name: Build and Unit Test
 
 on: 
   push:
     branches:
       - master
+    paths:
+      - '**.go'
+      - go.mod
+      - go.sum  
   pull_request:
     branches:
       - master
+    paths:
+      - '**.go'
+      - go.mod
+      - go.sum  
 
 jobs:
 
