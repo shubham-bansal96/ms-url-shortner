@@ -5,7 +5,6 @@ WORKDIR /app/ms-url-shortner
 ADD . /app/ms-url-shortner/
 
 RUN go mod download
-RUN go mod vendor
 RUN go build -o ms-url-shortner .
 
 

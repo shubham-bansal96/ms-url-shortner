@@ -20,8 +20,8 @@ func TestShortURL(testRunner *testing.T) {
 	//Test case 1
 	testRunner.Run("TestShortURL data already exists in url repo", func(testRunnerChild *testing.T) {
 		testhelper.MockConfig()
-		SetDataInURLRepository("https://www.infracloud.io", "https://tinyurl.com/ea95sh23")
-		reponseDTO := mockURLShortService.ShortURL(context.Background(), "https://www.infracloud.io")
+		SetDataInURLRepository("https://www.shubhambansal.com", "https://tinyurl.com/ea95sh23")
+		reponseDTO := mockURLShortService.ShortURL(context.Background(), "https://www.shubhambansal.com")
 		assert.Equal(testRunnerChild, "https://tinyurl.com/ea95sh23", *reponseDTO.URL, "TestShortURL must return https://tinyurl.com/ea95sh23")
 	})
 
@@ -35,7 +35,7 @@ func TestShortURL(testRunner *testing.T) {
 	//Test case 3
 	testRunner.Run("TestShortURLreturn shorted url", func(testRunnerChild *testing.T) {
 		testhelper.MockConfig()
-		reponseDTO := mockURLShortService.ShortURL(context.Background(), "https://www.infracloudtest.io")
+		reponseDTO := mockURLShortService.ShortURL(context.Background(), "https://www.shubhambansal.io")
 		assert.Equal(testRunnerChild, "https://shorturl.com/test123", *reponseDTO.URL, "TestShortURL must return the shorted url")
 	})
 }
