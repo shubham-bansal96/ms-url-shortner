@@ -3,7 +3,9 @@ package main
 import (
 	"log"
 
+	"github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/gin"
+
 	"github.com/ms-url-shortner/app/config"
 	_ "github.com/ms-url-shortner/app/docs"
 	"github.com/ms-url-shortner/app/logging"
@@ -15,6 +17,8 @@ const listenPort = ":4242"
 func main() {
 	gin.SetMode(gin.ReleaseMode)
 	gin := gin.Default()
+
+	pprof.Register(gin)
 
 	config.Initialize()
 	log.Println("config Initialized Successfully")
