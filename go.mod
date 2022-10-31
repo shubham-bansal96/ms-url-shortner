@@ -3,7 +3,6 @@ module github.com/ms-url-shortner
 go 1.18
 
 require (
-	github.com/gin-contrib/pprof v1.4.0
 	github.com/gin-gonic/gin v1.8.1
 	github.com/google/uuid v1.3.0
 	github.com/sirupsen/logrus v1.9.0
