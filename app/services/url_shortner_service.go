@@ -12,7 +12,10 @@ import (
 
 const shortURL = "shorturl.com/"
 
-var urlRepo map[string]string = make(map[string]string)
+var (
+	urlRepo      map[string]string = make(map[string]string)
+	shortURLRepo map[string]string = make(map[string]string)
+)
 
 type IShortenUrl interface {
 	ShortURL(ctx context.Context, url string) *model.URLDTO
@@ -37,6 +40,11 @@ func (su *ShortenUrl) ShortURL(ctx context.Context, url string) *model.URLDTO {
 		return &model.URLDTO{URL: &shortURL}
 	}
 
+	if longURL, isExists := shortURLRepo[url]; isExists {
+		lw.Info("url is already exists")
+		return &model.URLDTO{URL: &longURL}
+	}
+
 	if len(url) <= 20 {
 		lw.Info("url is already shorted")
 		return &model.URLDTO{URL: &url}
@@ -46,7 +54,7 @@ func (su *ShortenUrl) ShortURL(ctx context.Context, url string) *model.URLDTO {
 	newURL := fmt.Sprintf("%s//%s%s", str[0], shortURL, su.UId.GetUniqueID())
 
 	urlRepo[url] = newURL
-
+	shortURLRepo[newURL] = url
 	lw.Info("url shorted successfully")
 	return &model.URLDTO{URL: &newURL}
 }
