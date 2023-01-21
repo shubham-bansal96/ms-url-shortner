@@ -9,7 +9,6 @@ import (
 	"github.com/ms-url-shortner/app/config"
 	_ "github.com/ms-url-shortner/app/docs"
 	"github.com/ms-url-shortner/app/logging"
-	"github.com/ms-url-shortner/app/middleware"
 	"github.com/ms-url-shortner/app/route"
 )
 
@@ -20,7 +19,7 @@ func main() {
 	gin := gin.Default()
 
 	pprof.Register(gin)
-	gin.Use(middleware.RateLimiter())
+	// gin.Use(middleware.RateLimiter())
 	config.Initialize()
 	log.Println("config Initialized Successfully")
 
