@@ -4,7 +4,7 @@ metadata:
   # name: {{ include "url-shortner-charts.fullname" . }}
   name: {{ .Release.Name }}-urlshortnersvc
   labels:
-    {{- include "url-shortner-charts.labels" . | nindent 4 }}
+    {{- include "url-shortner-charts.selectorLabels" . | nindent 4 }}
 spec:
   type: {{ .Values.service.type }}
   ports:
