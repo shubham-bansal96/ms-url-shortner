@@ -41,7 +41,7 @@ func (su *ShortenUrl) ShortURL(ctx context.Context, url string) *model.URLDTO {
 	}
 
 	if longURL, isExists := shortURLRepo[url]; isExists {
-		lw.Info("url is already exists")
+		lw.Info("url is already exist")
 		return &model.URLDTO{URL: &longURL}
 	}
 
