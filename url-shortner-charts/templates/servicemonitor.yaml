@@ -4,6 +4,8 @@ kind: ServiceMonitor
 metadata:
   name: service-monitor
   namespace: {{ .Values.prometheus.namespace }}
+  labels:
+    release: prometheus
 spec:
   namespaceSelector:
     matchNames:
@@ -12,5 +14,6 @@ spec:
     matchLabels:
       {{- include "url-shortner-charts.selectorLabels" . | nindent 6 }}
   endpoints:
+  # we don't need to define path as default path is /metrics
   - targetPort: {{ .Values.service.port }}
 {{- end -}}

@@ -14,7 +14,9 @@ func Initialize(router *gin.Engine) {
 
 	ctrl := controller.NewBaseContoller(services.NewShortenURLService(services.NewUidService()))
 	appGroup := router.Group("/" + config.Config.MSName)
-	appGroup.GET(testEndPoint, middleware.MetricMiddleware(ctrl.Ping))
+	// appGroup.GET(testEndPoint, middleware.MetricMiddleware(ctrl.Ping))
+	appGroup.Use(middleware.MetricMiddleware())
+	appGroup.GET(testEndPoint, ctrl.Ping)
 	appGroup.POST(getShortURLEndPoint, ctrl.HandleURLShortner)
 }
 

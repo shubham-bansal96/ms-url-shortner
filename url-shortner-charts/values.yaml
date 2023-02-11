@@ -15,8 +15,8 @@ nameOverride: ""
 fullnameOverride: ""
 
 prometheus:
-  enabled: true
-  namespace: "default"
+  enabled: false
+  namespace: "monitoring"
 
 serviceAccount:
   # Specifies whether a service account should be created
