@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: {{ .Release.Name }}-urlshortner
   labels:
-    {{- include "url-shortner-charts.labels" . | nindent 4 }}
+    {{- include "url-shortner-charts.selectorLabels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
@@ -13,6 +13,11 @@ spec:
     metadata:
       labels:
         {{- include "url-shortner-charts.selectorLabels" . | nindent 8 }}
+      annotations:
+        # these annotation are not mandatory while using service monitor, but it is good practice to do it
+        prometheus.io/scrape: "true"
+        prometheus.io/path: "/metrics"
+        prometheus.io/port: "4242"  
     spec:
       containers:
         - name: {{ .Release.Name }}-{{ .Chart.Name }}
@@ -21,4 +26,5 @@ spec:
           ports:
             - name: http
               containerPort: {{ .Values.service.port }}
-              protocol: TCP
+            - containerPort: {{ .Values.service.port }}
+              name: metrics

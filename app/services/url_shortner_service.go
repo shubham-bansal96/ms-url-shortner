@@ -37,11 +37,13 @@ func (su *ShortenUrl) ShortURL(ctx context.Context, url string) *model.URLDTO {
 
 	if shortURL, isExists := urlRepo[url]; isExists {
 		lw.Info("short url is already exists")
+		URLShortedByCache.WithLabelValues(url).Inc()
 		return &model.URLDTO{URL: &shortURL}
 	}
 
 	if longURL, isExists := shortURLRepo[url]; isExists {
 		lw.Info("url is already exists")
+		URLShortedByCache.WithLabelValues(url).Inc()
 		return &model.URLDTO{URL: &longURL}
 	}
 
@@ -53,6 +55,7 @@ func (su *ShortenUrl) ShortURL(ctx context.Context, url string) *model.URLDTO {
 	str := strings.Split(url, "//")
 	newURL := fmt.Sprintf("%s//%s%s", str[0], shortURL, su.UId.GetUniqueID())
 
+	URLShortedBySVC.WithLabelValues(url).Inc()
 	urlRepo[url] = newURL
 	shortURLRepo[newURL] = url
 	lw.Info("url shorted successfully")
