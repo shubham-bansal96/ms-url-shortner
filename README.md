@@ -8,8 +8,8 @@ Micro-service used to short the url.
     2. If the URL is empty or doesn't contain "https://" OR "https://" as prefix, then the URL will be treated as invalid URL.
        For example "infracloud.io" will be treated as invalid, because it doesn't contain "https://" OR "https://" as prefix.
 
-    3. If URL is valid then a new shorted url will be generated with a 8 digit unique id.
-       For example "https://www.infracloud.io" will be converted to "https://shorturl.com/ebs123le. ebs123le is a 8 digit unique id.
+    3. If URL is valid then a new shorted url will be generated with a 8 digit unique ID.
+       For example "https://www.infracloud.io" will be converted to "https://shorturl.com/ebs123le. ebs123le is a 8 digit unique ID.
 
     4. Once the shorted URL is generated successfully, then it will be save into memory(map), so every time when request is 
     made then it will first check in map, and if the URL exists then it will directly return the same shorted URL from map.
