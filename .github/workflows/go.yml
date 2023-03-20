@@ -14,7 +14,8 @@ on:
     paths:
       - '**.go'
       - go.mod
-      - go.sum  
+      - go.sum
+  workflow_dispatch:    
 
 jobs:
 
