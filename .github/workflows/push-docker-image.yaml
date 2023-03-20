@@ -38,8 +38,8 @@ jobs:
             latest=true
 
       - name: Build and push Docker images
-        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+        uses: docker/build-push-action@v3
         with:
           context: .
           push: true
-          tags: ${{ steps.meta.outputs.tags }}     
+          tags: ${{ steps.metadata.outputs.tags }}     
