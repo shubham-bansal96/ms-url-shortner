@@ -7,7 +7,7 @@ ADD . /app/ms-url-shortner/
 LABEL org.opencontainers.image.source="https://github.com/shubham-bansal96/ms-url-shortner"
 
 RUN go mod download
-RUN GOOS=linux CGO_ENABLED=1 go build -o ms-url-shortner .
+RUN GOOS=linux CGO_ENABLED=0 go build -o ms-url-shortner .
 
 
 FROM alpine:latest
