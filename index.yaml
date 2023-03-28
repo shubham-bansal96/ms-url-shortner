@@ -2,8 +2,23 @@ apiVersion: v1
 entries:
   url-shortner-charts:
   - apiVersion: v2
+    appVersion: 1.0.1
+    created: "2023-03-28T23:32:46.798398523+05:30"
+    description: A Helm chart for Kubernetes
+    digest: 8508f208e7be8b2a64a496f3a428bf66a609d527e917205a8721d91072b0a48b
+    maintainers:
+    - email: shubhambansaliimtgn@gmail.com
+      name: Shubham Bansal
+    name: url-shortner-charts
+    sources:
+    - https://github.com/shubham-bansal96/ms-url-shortner
+    type: application
+    urls:
+    - url-shortner-charts-1.0.1.tgz
+    version: 1.0.1
+  - apiVersion: v2
     appVersion: 1.0.0
-    created: "2023-03-23T18:16:48.214707905+05:30"
+    created: "2023-03-28T23:32:46.797783939+05:30"
     description: A Helm chart for Kubernetes
     digest: 3a3c52b30a61425637b57df7aaf9423104889e0b00e8c2d1e97e2596e8a358a1
     maintainers:
@@ -14,6 +29,6 @@ entries:
     - https://github.com/shubham-bansal96/ms-url-shortner
     type: application
     urls:
-    - https://shubham-bansal96.github.io/ms-url-shortner/url-shortner-charts-1.0.0.tgz
+    - url-shortner-charts-1.0.0.tgz
     version: 1.0.0
-generated: "2023-03-23T18:16:48.21411489+05:30"
+generated: "2023-03-28T23:32:46.796957784+05:30"
