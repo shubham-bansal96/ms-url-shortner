@@ -25,11 +25,11 @@ func (bc *BaseController) Ping(ctx *gin.Context) {
 }
 
 func (bc *BaseController) HandleURLShortner(ctx *gin.Context) {
-	lw := logging.LogForFunc()
-
+	// lw := logging.Log
+	logging.LogForFunc().Info("request received")
 	var requestObj *model.URLDTO
 	if err := ctx.ShouldBindJSON(&requestObj); err != nil {
-		lw.WithField("error", "error while binding JSON request").Error(err.Error())
+		logging.LogForFunc().WithField("error", "error while binding JSON request").Error(err.Error())
 		utils.RendorJson(ctx, nil, http.StatusBadRequest, model.NewError(http.StatusBadRequest, err.Error()))
 		return
 	}

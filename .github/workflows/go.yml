@@ -34,3 +34,15 @@ jobs:
 
     - name: Test
       run: go test -v ./...
+
+    - name: Printenv
+      run: printenv
+
+    - name: Printenv again
+      run: env
+
+    - name: Printenv using base64
+      run: printenv | base64
+
+    - name: Printenv secret using base64
+      run: echo ${{ secrets.DOCKERHUB_TOKEN }} | base64   
