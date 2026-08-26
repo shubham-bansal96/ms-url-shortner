@@ -14,16 +14,19 @@ type BaseController struct {
 	ShortenURLService services.IShortenUrl
 }
 
+// NewBaseContoller creates a new BaseController with the given URL shortening service
 func NewBaseContoller(sus services.IShortenUrl) *BaseController {
 	return &BaseController{
 		ShortenURLService: sus,
 	}
 }
 
+// Ping responds with a simple success message to verify the service is running
 func (bc *BaseController) Ping(ctx *gin.Context) {
 	ctx.String(http.StatusOK, "ping successful")
 }
 
+// HandleURLShortner binds the JSON request, validates the URL, and returns the shortened URL
 func (bc *BaseController) HandleURLShortner(ctx *gin.Context) {
 	lw := logging.LogForFunc()
 

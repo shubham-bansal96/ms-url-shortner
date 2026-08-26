@@ -45,6 +45,7 @@ func init() {
 // 	}
 // }
 
+// MetricMiddleware records request count, in-flight gauge, and duration for each request
 func MetricMiddleware() gin.HandlerFunc {
 	return gin.HandlerFunc(func(ctx *gin.Context) {
 		totalRequests.WithLabelValues(ctx.Request.URL.Path).Inc()

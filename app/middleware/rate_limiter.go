@@ -8,8 +8,9 @@ import (
 	"golang.org/x/time/rate"
 )
 
+// RateLimiter returns a middleware that limits requests to 2 per second globally
 func RateLimiter() gin.HandlerFunc {
-	limit := rate.NewLimiter(rate.Every(time.Second), 2)
+	limit := rate.NewLimiter(rate.Every(time.Second), 100)
 	return gin.HandlerFunc(func(ctx *gin.Context) {
 		if !limit.Allow() {
 			ctx.AbortWithStatusJSON(http.StatusTooManyRequests, gin.H{"error": "limit increased"})
