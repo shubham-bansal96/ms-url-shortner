@@ -19,6 +19,7 @@ type Logging struct {
 
 var Config *Configuration
 
+// Initialize reads and parses the YAML config file into the global Config variable
 func Initialize() {
 	ymlConfig, err := ioutil.ReadFile(FileName)
 	if err != nil {
@@ -29,7 +30,7 @@ func Initialize() {
 	}
 }
 
-// helper method to set mock config
+// SetConfig overrides the global Config with the provided configuration (used in tests)
 func SetConfig(config *Configuration) {
 	Config = config
 }

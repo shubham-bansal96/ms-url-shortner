@@ -11,6 +11,7 @@ type URLDTO struct {
 	URL *string `json:"url"`
 }
 
+// Validate checks that the URL is non-empty and has a valid http/https prefix
 func (url *URLDTO) Validate() *Error {
 	lw := logging.LogForFunc()
 
@@ -34,6 +35,7 @@ func (url *URLDTO) Validate() *Error {
 	return NewError(http.StatusUnprocessableEntity, "invalid url")
 }
 
+// NewURLDto creates and returns an empty URLDTO instance
 func NewURLDto() *URLDTO {
 	return &URLDTO{}
 }

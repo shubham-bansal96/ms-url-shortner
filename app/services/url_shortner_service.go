@@ -25,13 +25,14 @@ type ShortenUrl struct {
 	UId IUID
 }
 
+// NewShortenURLService creates a new ShortenUrl service with the given UID generator
 func NewShortenURLService(uid IUID) IShortenUrl {
 	return &ShortenUrl{
 		UId: uid,
 	}
 }
 
-// ShortURL = > short the URL coming in JSON request
+// ShortURL shortens the given URL, returning from cache if available or generating a new one
 func (su *ShortenUrl) ShortURL(ctx context.Context, url string) *model.URLDTO {
 	lw := logging.LogForFunc()
 
@@ -62,7 +63,7 @@ func (su *ShortenUrl) ShortURL(ctx context.Context, url string) *model.URLDTO {
 	return &model.URLDTO{URL: &newURL}
 }
 
-// helper method for test case
+// SetDataInURLRepository inserts a key-value pair into the URL cache (used in tests)
 func SetDataInURLRepository(key, value string) {
 	urlRepo[key] = value
 }
@@ -72,11 +73,12 @@ type IUID interface {
 }
 type UId struct{}
 
+// NewUidService creates a new UId service that generates unique identifiers
 func NewUidService() IUID {
 	return &UId{}
 }
 
-// GetUniqueID => generate unique id in 32 hexa decimal digit in the form of 8-4-4-4-12
+// GetUniqueID generates an 8-character unique identifier from a UUID
 func (uid *UId) GetUniqueID() string {
 	uuid := strings.Split(uuid.New().String(), "-")
 	return uuid[0]

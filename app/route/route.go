@@ -9,6 +9,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
+// Initialize registers all application routes and middleware on the given Gin engine
 func Initialize(router *gin.Engine) {
 	router.GET("/metrics", gin.WrapH(promhttp.Handler()))
 
@@ -20,6 +21,7 @@ func Initialize(router *gin.Engine) {
 	appGroup.POST(getShortURLEndPoint, ctrl.HandleURLShortner)
 }
 
+// prometheusHandler wraps the Prometheus HTTP handler as Gin-compatible middleware
 func prometheusHandler() gin.HandlerFunc {
 	h := promhttp.Handler()
 

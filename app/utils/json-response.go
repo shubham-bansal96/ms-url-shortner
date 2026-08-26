@@ -5,6 +5,7 @@ import (
 	"github.com/ms-url-shortner/app/model"
 )
 
+// RendorJson writes a standardized JSON response with data and error fields
 func RendorJson(ctx *gin.Context, data interface{}, statusCode int, err *model.Error) {
 	responseDTO := &model.ResponseDTO{
 		Data:  data,

@@ -10,6 +10,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// Initialize sets up Logrus with the configured log level and JSON formatter
 func Initialize(cfg *config.Configuration) {
 	if level, err := logrus.ParseLevel(cfg.Log.LogLevel); err == nil {
 		logrus.SetLevel(level)
@@ -19,6 +20,7 @@ func Initialize(cfg *config.Configuration) {
 	logrus.SetFormatter(&logrus.JSONFormatter{})
 }
 
+// LogForFunc returns a Logrus entry enriched with caller file, function, and app metadata
 func LogForFunc() *logrus.Entry {
 	pc, file, line, ok := runtime.Caller(1)
 	if !ok {

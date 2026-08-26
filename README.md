@@ -1,112 +1,406 @@
-# ms-url-shortner
-Micro-service used to short the url.
+# ms-url-shortner — URL Shortener Microservice
 
-# Technical Specification
-    1. If length of URL is 20 or less then 20 then no need to shorten the URL. For example "https://www.test.com", the length of
-       this url is 20 so we don't need to short this URL. Same URL will be return in JSON response body.
-    
-    2. If the URL is empty or doesn't contain "https://" OR "https://" as prefix, then the URL will be treated as invalid URL.
-       For example "infracloud.io" will be treated as invalid, because it doesn't contain "https://" OR "https://" as prefix.
+![Go](https://img.shields.io/badge/Go-1.26-00ADD8?style=flat&logo=go)
+![Gin](https://img.shields.io/badge/Gin-v1.12-blue?style=flat)
+![Prometheus](https://img.shields.io/badge/Prometheus-Metrics-E6522C?style=flat&logo=prometheus)
+![Docker](https://img.shields.io/badge/Docker-Containerized-2496ED?style=flat&logo=docker)
+![Helm](https://img.shields.io/badge/Helm-K8s_Deploy-0F1689?style=flat&logo=helm)
 
-    3. If URL is valid then a new shorted url will be generated with a 8 digit unique id.
-       For example "https://www.infracloud.io" will be converted to "https://shorturl.com/ebs123le. ebs123le is a 8 digit unique ID.
+A lightweight **URL Shortener** microservice built in Go using the [Gin](https://github.com/gin-gonic/gin) framework. Accepts long URLs via a REST API and returns shortened URLs with an 8-character unique identifier. Includes Prometheus metrics, rate limiting, structured logging, and is deployable to Kubernetes via Helm.
 
-    4. Once the shorted URL is generated successfully, then it will be save into memory(map), so every time when request is 
-    made then it will first check in map, and if the URL exists then it will directly return the same shorted URL from map.
+---
 
-# Error Codes for JSON Response- 
-    -----------------------------------------------------------------------------------------
-    | Error Codes               |  Description                                              |
-    -----------------------------------------------------------------------------------------
-    | 400(Bad Request)          |  If JSON request is not able to bind with object          |
-    -----------------------------------------------------------------------------------------
-    | 422(Unprocessable entity) |  If data inside JSON request is empty or is not valid     |
-    -----------------------------------------------------------------------------------------
-    | 200(status ok)            |  URL is successfully shorted                              |
-    -----------------------------------------------------------------------------------------
+## Features
 
-# go run main.go -> this command will start the application locally
+- **URL Shortening** — generates short URLs with 8-character unique IDs
+- **In-Memory Cache** — previously shortened URLs are stored in memory for instant retrieval on repeat requests
+- **Input Validation** — rejects empty URLs and those missing `http://` or `https://` prefix
+- **Smart Length Check** — URLs of 20 characters or fewer are returned as-is (already short enough)
+- **Prometheus Metrics** — built-in `/metrics` endpoint for monitoring request counts, latencies, and more
+- **Rate Limiting** — configurable rate limiter middleware to protect against abuse
+- **Structured Logging** — Logrus-based logging with configurable log levels
+- **Profiling** — pprof endpoints enabled for runtime performance analysis
+- **Kubernetes Ready** — Helm chart for easy deployment and scaling on K8s
+- **Swagger Documentation** — auto-generated API spec from source code annotations
 
-# Application Running Port - 4242
+---
 
-# Base URL - http://localhost:4242/ms-url-shortner
+## Architecture
 
-# EndPoints - 
-    ---------------------------------------------------------------------------------------------------------------------------------
-    | EndPoints    | Request Type | Description                                 | URL                                               |
-    ---------------------------------------------------------------------------------------------------------------------------------
-    | /ping        |    Get       | test whether application is running or not  | http://localhost:4242/ms-url-shortner/ping        |
-    ---------------------------------------------------------------------------------------------------------------------------------
-    | /getshorturl |    POST      | get the shorted URL                         | http://localhost:4242/ms-url-shortner/getshorturl |
-    ---------------------------------------------------------------------------------------------------------------------------------
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                         REQUEST FLOW                                  │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                      │
+│  Client ──→ Gin Router ──→ Rate Limiter ──→ Metrics Middleware       │
+│                                                      │               │
+│                                                      ▼               │
+│                                              Base Controller         │
+│                                                      │               │
+│                                                      ▼               │
+│                                           URL Shortener Service      │
+│                                              │            │          │
+│                                              ▼            ▼          │
+│                                        Validate URL   Check Cache    │
+│                                              │            │          │
+│                                              ▼            ▼          │
+│                                        Generate UID   Return Cached  │
+│                                              │                       │
+│                                              ▼                       │
+│                                        Store in Map                  │
+│                                              │                       │
+│                                              ▼                       │
+│                                        JSON Response                 │
+│                                                                      │
+└─────────────────────────────────────────────────────────────────────┘
 
-# Json Request Object for endpoint -> /getshorturl 
-    {
-        url: string
-    }
-    Example - 
-    {
-        "url":"https://infracloud.io"
-    }
-    
-# Json Response object for endpoint - > /getshorturl 
-        {
-            data  interface{} 
-            error {
-                code int
-                message string
-            }      
-        }
+┌─────────────────────────────────────────────────────────────────────┐
+│                       OBSERVABILITY                                   │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                      │
+│  /metrics ──→ Prometheus ──→ Grafana Dashboard                       │
+│  /debug/pprof ──→ CPU / Memory / Goroutine Profiling                 │
+│                                                                      │
+└─────────────────────────────────────────────────────────────────────┘
+```
 
-    Example
-    1. If there is no error it means response is successful
-        {
-            "data": {
-                "url": "https://shorturl.com/ecfd35c4"
-            },
-            "error": null
-        }
-    2. If there is any error
-            {
-                "data": null,
-                "error": {
-                    "code": 422,
-                    "message": "invalid url"
-                }
-            }
+---
 
-# Docker image - https://hub.docker.com/r/shubhambansal96/msurlshortner
-    docker image for this app is available on docker hub, you can run below mentioned command to run image on your machine. I have
-    created this image as public for as of now, so no credentials are required to pull this image.
+## Tech Stack
 
-    Image Name - shubhambansal96/msurlshortner
+| Component | Technology | Purpose |
+|-----------|-----------|---------|
+| Language | Go 1.26 | Core application |
+| Framework | Gin v1.12 | HTTP router and middleware |
+| Metrics | Prometheus client_golang | Request metrics and monitoring |
+| Logging | Logrus | Structured logging with levels |
+| Profiling | pprof | Runtime performance analysis |
+| Rate Limiting | golang.org/x/time | Token bucket rate limiter |
+| Containerization | Docker (multi-stage) | Lightweight Alpine-based image |
+| Orchestration | Helm + Kubernetes | Deployment, scaling, and management |
+| API Docs | go-swagger | Auto-generated Swagger spec |
 
-    1. To pull and run this image -> docker run -td -p 4246:4242 shubhambansal96/msurlshortner
-                
-    NOTE -> Container will be running on port 4242, make sure you map host port to container port on 4242
-        example -> docker run -td -p 4246:4242 shubhambansal96/msurlshortner, 4246 is host port, you can give any port number in place of 4246.
+---
 
-# Swagger 
-    To install swagger on Windows/Linux/Mac, please go through with mentioned below link
-    https://goswagger.io/install.html
+## Project Structure
 
-    Once you install swagger then download the go package for the same using
-    go get -d github.com/go-swagger/go-swagger/cmd/swagger
+```
+ms-url-shortner/
+├── main.go                          # Application entry point
+├── config.yml                       # Application configuration
+├── Dockerfile                       # Multi-stage Docker build
+├── Makefile                         # Build, test, and deploy shortcuts
+├── swagger.yaml                     # Generated API specification
+├── app/
+│   ├── config/
+│   │   ├── config.go                # Configuration loader (YAML)
+│   │   └── constant.go              # Config constants
+│   ├── controller/
+│   │   ├── base_controller.go       # HTTP handlers (ping, shorten)
+│   │   └── base_controller_test.go  # Controller unit tests
+│   ├── model/
+│   │   ├── url_shortner.go          # Request/domain models
+│   │   ├── url_shortner_test.go     # Model unit tests
+│   │   └── responseDTO.go           # Response DTOs
+│   ├── services/
+│   │   ├── url_shortner_service.go      # URL shortening business logic
+│   │   ├── url_shortner_service_test.go # Service unit tests
+│   │   └── metrics.go                   # Prometheus metric definitions
+│   ├── middleware/
+│   │   ├── metrics.go               # Prometheus metrics middleware
+│   │   └── rate_limiter.go          # Rate limiting middleware
+│   ├── route/
+│   │   ├── route.go                 # Route registration
+│   │   └── constant.go              # Route path constants
+│   ├── logging/
+│   │   └── logger.go                # Logrus logger setup
+│   ├── utils/
+│   │   └── json-response.go         # JSON response helpers
+│   ├── docs/
+│   │   └── docs.go                  # Swagger annotations
+│   └── test-helper/
+│       ├── config_mock.go           # Config mocks for tests
+│       └── service_mock.go          # Service mocks for tests
+└── url-shortner-charts/             # Helm chart for K8s deployment
+    ├── Chart.yaml
+    ├── values.yaml
+    └── templates/
+```
 
-    Run swagger generate spec -o ./swagger.yaml --scan-models in the root of project.
-    swagger serve -F=swagger swagger.yaml
+---
 
-    If the commands look complicated there’s a simpler way! Just create a file called Makefile in the root of your project and paste the following snippet into it:
+## Prerequisites
 
-    swagger:
-	swagger generate spec -o ./swagger.yaml --scan-models
+### Go 1.26+
 
-    serve-swagger:
-        swagger serve -F=swagger swagger.yaml
+```bash
+# macOS
+brew install go
 
-    Then you can simply use make swagger to generate the spec (i.e. swagger.yaml) and use make serve-swagger to view the resulting docs in a browser. Also instead of using make serve-swagger you can paste your yaml file into swagger editor.
-                                            
-    For more info you can go through with mentioned below link
-    https://medium.com/@pedram.esmaeeli/generate-swagger-specification-from-go-source-code-648615f7b9d9
-    
-# END
+# Verify
+go version
+```
+
+### Docker (for containerized runs)
+
+```bash
+# macOS
+brew install --cask docker
+
+# Verify
+docker --version
+```
+
+### Helm & Kubernetes (for K8s deployment)
+
+```bash
+# macOS
+brew install helm kubectl
+
+# Verify
+helm version
+kubectl version --client
+```
+
+---
+
+## Quick Start
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/shubham-bansal96/ms-url-shortner.git
+cd ms-url-shortner
+
+# 2. Run locally
+make run
+
+# 3. Test the health endpoint
+curl http://localhost:4242/ms-url-shortner/ping
+
+# 4. Shorten a URL
+curl -X POST http://localhost:4242/ms-url-shortner/getshorturl \
+  -H "Content-Type: application/json" \
+  -d '{"url": "https://www.example.com/very/long/path/to/resource"}'
+```
+
+Or using Docker:
+
+```bash
+make docker-run
+```
+
+Or deploy to Kubernetes:
+
+```bash
+make helm-install
+```
+
+---
+
+## API Reference
+
+### Base URL
+
+```
+http://localhost:4242/ms-url-shortner
+```
+
+### Endpoints
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/ping` | GET | Health check — verify the service is running |
+| `/getshorturl` | POST | Shorten a URL |
+| `/metrics` | GET | Prometheus metrics |
+| `/debug/pprof` | GET | Profiling endpoints |
+
+### POST `/getshorturl`
+
+**Request:**
+
+```json
+{
+  "url": "https://www.example.com/very/long/path/to/resource"
+}
+```
+
+**Success Response (200):**
+
+```json
+{
+  "data": {
+    "url": "https://shorturl.com/ecfd35c4"
+  },
+  "error": null
+}
+```
+
+**Error Responses:**
+
+| Code | Condition | Example |
+|------|-----------|---------|
+| 400 | Malformed JSON body | Request body cannot be parsed |
+| 422 | Invalid or empty URL | Missing `http://` or `https://` prefix |
+
+```json
+{
+  "data": null,
+  "error": {
+    "code": 422,
+    "message": "invalid url"
+  }
+}
+```
+
+---
+
+## URL Shortening Rules
+
+1. **Already short** — if the URL is 20 characters or fewer, it is returned as-is
+2. **Invalid URL** — empty strings or URLs without `http://` / `https://` prefix are rejected with a 422 error
+3. **Shortened URL** — valid long URLs get an 8-character unique ID: `https://shorturl.com/<8-char-uid>`
+4. **Cached** — once shortened, the mapping is stored in memory; repeat requests return the same short URL instantly
+
+---
+
+## Configuration
+
+The application is configured via `config.yml`:
+
+| Key | Default | Description |
+|-----|---------|-------------|
+| `Logging.LogLevel` | `debug` | Log level (debug, info, warn, error, fatal) |
+| `MSName` | `ms-url-shortner` | Microservice name (used as route prefix) |
+| `Environment` | `dev` | Environment identifier |
+
+---
+
+## Running Tests
+
+```bash
+# Run all tests
+make test
+
+# Run with verbose output
+make test-verbose
+
+# Run with coverage report
+make test-coverage
+```
+
+---
+
+## Docker
+
+The image uses a multi-stage build (builder on `golang:alpine`, runtime on `alpine:latest`) for a minimal footprint.
+
+```bash
+# Build the image
+make docker-build
+
+# Build and run (exposes port 4000)
+make docker-run
+
+# Or pull from Docker Hub directly
+docker run -td -p 4242:4000 shubhambansal96/msurlshortner
+```
+
+**Docker Hub:** [shubhambansal96/msurlshortner](https://hub.docker.com/r/shubhambansal96/msurlshortner)
+
+---
+
+## Kubernetes Deployment (Helm)
+
+A Helm chart is available for deploying to any Kubernetes cluster.
+
+**Chart Repository:** https://shubham-bansal96.github.io/ms-url-shortner/
+
+```bash
+# Add the Helm repo
+make helm-repo-add
+
+# Install the chart
+make helm-install
+
+# Check status
+make helm-status
+
+# Upgrade after chart changes
+make helm-upgrade
+
+# Uninstall
+make helm-uninstall
+
+# Override namespace
+make helm-install NAMESPACE=production
+```
+
+### Helm Values (defaults)
+
+| Value | Default | Description |
+|-------|---------|-------------|
+| `replicaCount` | `2` | Number of pod replicas |
+| `image.repository` | `shubhambansal96/msurlshortner` | Docker image |
+| `image.tag` | `latest` | Image tag |
+| `service.type` | `NodePort` | Kubernetes service type |
+| `service.port` | `4242` | Service port |
+| `prometheus.enabled` | `false` | Enable ServiceMonitor for Prometheus |
+| `autoscaling.enabled` | `false` | Enable HPA |
+
+---
+
+## Swagger / API Docs
+
+```bash
+# Generate the spec from source code annotations
+make swagger
+
+# Serve the Swagger UI in browser
+make serve-swagger
+```
+
+Alternatively, paste `swagger.yaml` into [Swagger Editor](https://editor.swagger.io/).
+
+> **Install go-swagger:** https://goswagger.io/install.html
+
+---
+
+## Makefile Commands
+
+```bash
+make help
+```
+
+| Target | Description |
+|--------|-------------|
+| `build` | Build the binary |
+| `run` | Run the application |
+| `test` | Run tests |
+| `test-verbose` | Run tests with verbose output |
+| `test-coverage` | Run tests with coverage report |
+| `fmt` | Format code |
+| `vet` | Run go vet |
+| `lint` | Run golangci-lint |
+| `vendor` | Update vendor directory |
+| `tidy` | Tidy go modules |
+| `clean` | Remove build artifacts |
+| `docker-build` | Build Docker image |
+| `docker-run` | Build and run Docker container |
+| `swagger` | Generate swagger spec |
+| `serve-swagger` | Serve swagger UI |
+| `helm-repo-add` | Add Helm chart repository |
+| `helm-install` | Install the chart on K8s |
+| `helm-upgrade` | Upgrade the release |
+| `helm-uninstall` | Uninstall the release |
+| `helm-status` | Show release status |
+| `helm-template` | Render chart templates locally |
+
+---
+
+## Acknowledgments
+
+- [Gin](https://github.com/gin-gonic/gin) — High-performance HTTP framework for Go
+- [Prometheus](https://prometheus.io/) — Monitoring and alerting toolkit
+- [Logrus](https://github.com/sirupsen/logrus) — Structured logger for Go
+- [go-swagger](https://goswagger.io/) — Swagger 2.0 implementation for Go
+- [Helm](https://helm.sh/) — Kubernetes package manager
